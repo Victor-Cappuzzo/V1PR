@@ -25,13 +25,13 @@ length = 100 # Length of pendulum arm [m]
 b = 100 # Drag coefficient
 g = 9.81 # Gravitational constant [m/s^2]
 time_step = 1/FPS
-force_mag = 244 # Force applied when pressing keys [N]
+force_mag = 250 # Force applied when pressing keys [N]
 
 # INITIAL CONDITIONS
 cart_x = SCREEN_WIDTH/2 # Cart position
 cart_v = 0 # Cart velocity
 cart_a = 0 # Cart acceleration
-pend_angle = math.pi # Pendulum angle, where pi = down and 0 = up [deg]
+pend_angle = 0 # Pendulum angle, where pi = down and 0 = up [deg]
 pend_angle_vel = 0 # Pendulum angle velocity [deg/s]
 
 # PID CONSTANTS
@@ -40,7 +40,7 @@ K_i = 600
 K_d = 500
 error_sum = 0 # For integration control
 previous_error = 0 # For derivative control
-theta_setpoint = math.pi # Pendulum upright
+theta_setpoint = 0 # Pendulum upright
 
 # User PID select
 PID_index = 0
@@ -116,11 +116,11 @@ while running:
         cart_x = SCREEN_WIDTH/2
         cart_v = 0
         cart_a = 0
-        pend_angle = math.pi
+        pend_angle = 0
         pend_angle_vel = 0
         error_sum = 0
         previous_error = 0
-        theta_setpoint = math.pi
+        theta_setpoint = 0
 
     # PID Control Loop
     error = theta_setpoint - pend_angle
@@ -139,10 +139,10 @@ while running:
     cart_x += cart_v * time_step
 
     # Pendulum dynamics (simplified)
-    # Equation: theta_dot = -(g/L)*sin(theta) + cart_accel*cos(theta)/L
+    # Equation: theta_dot = (g/L)*sin(theta) + cart_accel*cos(theta)/L
     theta = pend_angle
     theta_dot = pend_angle_vel
-    theta_ddot = -(g/length)*math.sin(theta) - (cart_a/length)*math.cos(theta)
+    theta_ddot = (g/length)*math.sin(theta) + (cart_a/length)*math.cos(theta)
 
     pend_angle_vel += theta_ddot * time_step
     pend_angle += theta_dot * time_step
@@ -151,8 +151,8 @@ while running:
     screen.fill(WHITE)
 
     # Draw cart
-    pend_x = cart_x + length*math.sin(pend_angle)
-    pend_y = SCREEN_HEIGHT//2 + length*math.cos(pend_angle)
+    pend_x = cart_x - length*math.sin(pend_angle)
+    pend_y = SCREEN_HEIGHT//2 - length*math.cos(pend_angle)
     cart_rect = pygame.Rect(cart_x - CART_WIDTH//2, SCREEN_HEIGHT//2, CART_WIDTH, CART_HEIGHT)
     pygame.draw.rect(screen, BLACK, cart_rect)
 
